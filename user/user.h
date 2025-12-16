@@ -1,3 +1,5 @@
+#include "kernel/types.h"
+
 struct stat;
 
 // system calls
@@ -39,3 +41,9 @@ void free(void*);
 int atoi(const char*);
 int memcmp(const void *, const void *, uint);
 void *memcpy(void *, const void *, uint);
+
+// uthread.c
+void thread_init(void);
+void thread_create(void (*func)());
+void thread_yield(void);
+void thread_exit(void);

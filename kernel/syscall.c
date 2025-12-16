@@ -102,6 +102,19 @@ extern uint64 sys_link(void);
 extern uint64 sys_mkdir(void);
 extern uint64 sys_close(void);
 
+// Shared user counter syscalls
+extern uint64 sys_ucnt_set(void);
+extern uint64 sys_ucnt_get(void);
+// User buffer syscalls
+extern uint64 sys_ubuf_write(void);
+extern uint64 sys_ubuf_read(void);
+// Semaphore syscalls
+extern uint64 sys_sem_init(void);
+extern uint64 sys_sem_wait(void);
+extern uint64 sys_sem_post(void);
+extern uint64 sys_sem_getvalue(void);
+extern uint64 sys_sem_free(void);
+
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
 static uint64 (*syscalls[])(void) = {
@@ -126,6 +139,15 @@ static uint64 (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
+[SYS_ucnt_set] sys_ucnt_set,
+[SYS_ucnt_get] sys_ucnt_get,
+[SYS_ubuf_write] sys_ubuf_write,
+[SYS_ubuf_read] sys_ubuf_read,
+[SYS_sem_init] sys_sem_init,
+[SYS_sem_wait] sys_sem_wait,
+[SYS_sem_post] sys_sem_post,
+[SYS_sem_getvalue] sys_sem_getvalue,
+[SYS_sem_free] sys_sem_free,
 };
 
 void

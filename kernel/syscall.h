@@ -20,3 +20,18 @@
 #define SYS_link   19
 #define SYS_mkdir  20
 #define SYS_close  21
+
+// Shared user counter syscalls
+#define SYS_ucnt_set    22
+#define SYS_ucnt_get    23
+
+// User buffer syscalls
+#define SYS_ubuf_write    24
+#define SYS_ubuf_read    25
+
+// Semaphore syscalls
+#define SYS_sem_init        26
+#define SYS_sem_wait        27
+#define SYS_sem_post        28
+#define SYS_sem_getvalue    29
+#define SYS_sem_free        30

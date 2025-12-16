@@ -1,3 +1,6 @@
+#include "types.h"
+#include "riscv.h"
+
 struct buf;
 struct context;
 struct file;
@@ -187,3 +190,38 @@ void            virtio_disk_intr(void);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
+
+// ucnt.c
+// Initialize the kernel shared user counter (ucnt)
+void ucnt_init();
+// Set the ucnt `idx` to a value `val`
+void ucnt_set(int idx, int val);
+// Get value of ucnt `idx`
+int ucnt_get(int idx);
+
+// ubuf.c
+// Initialize the kernel shared user buffer (ubuf)
+void ubuf_init();
+// Read a byte (char) from the buffer
+char ubuf_read(void);
+// Write a byte to the buffer 
+void ubuf_write(char val);
+
+// semaphore.c
+// Init the semaphore subsystem
+void seminit(void);
+// Allocate semaphore with initial 'value'. 
+// Return: semid or -1 on failure
+int sem_alloc(int value);
+// Free the semaphore `semid`
+// Return: 0 on success or -1 on failure
+int sem_free(int semid);
+// Decrement `semid` and block if zero
+// Return: 0 on success or -1 on failure
+int sem_wait(int semid);
+// Increment `semid`
+// Return: 0 on success or -1 on failure
+int sem_post(int semid);
+// Read `semid` current value
+// Return: `semid` value on success or -1 on failure
+int sem_getvalue(int semid);

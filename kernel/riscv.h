@@ -1,4 +1,5 @@
 #ifndef __ASSEMBLER__
+#define __ASSEMBLER__
 
 // which hart (core) is this?
 static inline uint64

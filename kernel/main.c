@@ -28,6 +28,8 @@ main()
     iinit();         // inode table
     fileinit();      // file table
     virtio_disk_init(); // emulated hard disk
+    seminit();       // semaphore table
+    ucnt_init(); ubuf_init(); // user counter & buffer
     userinit();      // first user process
     __sync_synchronize();
     started = 1;

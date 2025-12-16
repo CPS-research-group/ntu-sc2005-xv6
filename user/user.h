@@ -1,3 +1,5 @@
+#include "kernel/types.h"
+
 struct stat;
 
 // system calls
@@ -22,6 +24,23 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+// ---- Lab 3 additions -----
+// Counter 
+void ucnt_set(int idx, int val);
+int ucnt_get(int idx);
+
+// Buffer 
+#define UBUF_SIZE 16
+char ubuf_read(void);
+void ubuf_write(char val);
+
+// Semaphore system calls
+int sem_init(int value);
+int sem_wait(int semid);
+int sem_post(int semid);
+int sem_getvalue(int semid);
+int sem_free(int semid);
+// ----------------------------
 
 // ulib.c
 int stat(const char*, struct stat*);

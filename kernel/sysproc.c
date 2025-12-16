@@ -91,3 +91,61 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+// System call wrappers for shared user counter
+uint64 sys_ucnt_set(void) {
+  int idx, val;
+  argint(0, &idx);
+  argint(1, &val);
+  ucnt_set(idx, val);
+  return 0;
+}
+
+uint64 sys_ucnt_get(void) {
+  int idx;
+  argint(0, &idx);
+  return ucnt_get(idx);
+}
+
+// System call wrappers for user buffer
+uint64 sys_ubuf_write(void) {
+  int val;
+  argint(0, &val);
+  ubuf_write((char)val);
+  return 0;
+}
+
+uint64 sys_ubuf_read(void) {
+  return (uint64) ubuf_read();
+}
+
+// Kernel-level semaphore syscall handlers
+uint64 sys_sem_init(void) {
+  int value;
+  argint(0, &value);
+  return sem_alloc(value);
+}
+
+uint64 sys_sem_wait(void) {
+  int semid;
+  argint(0, &semid);
+  return sem_wait(semid);
+}
+
+uint64 sys_sem_post(void) {
+  int semid;
+  argint(0, &semid);
+  return sem_post(semid);
+}
+
+uint64 sys_sem_getvalue(void) {
+  int semid;
+  argint(0, &semid);
+  return sem_getvalue(semid);
+}
+
+uint64 sys_sem_free(void) {
+  int semid;
+  argint(0, &semid);
+  return sem_free(semid);
+}

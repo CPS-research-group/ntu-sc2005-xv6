@@ -111,7 +111,7 @@ extern uint64 sys_ubuf_read(void);
 // Semaphore syscalls
 extern uint64 sys_sem_init(void);
 extern uint64 sys_sem_wait(void);
-extern uint64 sys_sem_post(void);
+extern uint64 sys_sem_signal(void);
 extern uint64 sys_sem_getvalue(void);
 extern uint64 sys_sem_free(void);
 
@@ -145,7 +145,7 @@ static uint64 (*syscalls[])(void) = {
 [SYS_ubuf_read] sys_ubuf_read,
 [SYS_sem_init] sys_sem_init,
 [SYS_sem_wait] sys_sem_wait,
-[SYS_sem_post] sys_sem_post,
+[SYS_sem_signal] sys_sem_signal,
 [SYS_sem_getvalue] sys_sem_getvalue,
 [SYS_sem_free] sys_sem_free,
 };

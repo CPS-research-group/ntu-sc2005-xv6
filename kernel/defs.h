@@ -221,7 +221,7 @@ int sem_free(int semid);
 int sem_wait(int semid);
 // Increment `semid`
 // Return: 0 on success or -1 on failure
-int sem_post(int semid);
+int sem_signal(int semid);
 // Read `semid` current value
 // Return: `semid` value on success or -1 on failure
 int sem_getvalue(int semid);

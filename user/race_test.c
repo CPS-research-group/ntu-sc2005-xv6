@@ -21,7 +21,7 @@ void sem_basic() {
     T_ASSERT(sem_getvalue(semid) == 0);
 
     printf("[sem_basic] Posting (should increment to 1)...\n");
-    sem_post(semid);
+    sem_signal(semid);
     T_ASSERT(sem_getvalue(semid) == 1);
 
     sem_free(semid);

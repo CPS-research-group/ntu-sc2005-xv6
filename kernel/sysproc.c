@@ -132,10 +132,10 @@ uint64 sys_sem_wait(void) {
   return sem_wait(semid);
 }
 
-uint64 sys_sem_post(void) {
+uint64 sys_sem_signal(void) {
   int semid;
   argint(0, &semid);
-  return sem_post(semid);
+  return sem_signal(semid);
 }
 
 uint64 sys_sem_getvalue(void) {

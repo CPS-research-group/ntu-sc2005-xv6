@@ -42,6 +42,6 @@ entry("ubuf_write");
 entry("ubuf_read");
 entry("sem_init");
 entry("sem_wait");
-entry("sem_post");
+entry("sem_signal");
 entry("sem_getvalue");
 entry("sem_free");

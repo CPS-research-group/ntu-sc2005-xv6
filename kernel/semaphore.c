@@ -70,7 +70,7 @@ sem_wait(int semid)
 }
 
 int
-sem_post(int semid)
+sem_signal(int semid)
 {
   if(semid < 0 || semid >= MAX_SEMAPHORES || !semaphores[semid].in_use)
     return -1;

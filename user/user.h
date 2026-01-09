@@ -37,7 +37,7 @@ void ubuf_write(char val);
 // Semaphore system calls
 int sem_init(int value);
 int sem_wait(int semid);
-int sem_post(int semid);
+int sem_signal(int semid);
 int sem_getvalue(int semid);
 int sem_free(int semid);
 // ----------------------------

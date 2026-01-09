@@ -32,6 +32,6 @@
 // Semaphore syscalls
 #define SYS_sem_init        26
 #define SYS_sem_wait        27
-#define SYS_sem_post        28
+#define SYS_sem_signal        28
 #define SYS_sem_getvalue    29
 #define SYS_sem_free        30

@@ -22,12 +22,12 @@
 #define SYS_close  21
 
 // Shared user counter syscalls
-#define SYS_ucnt_set    22
-#define SYS_ucnt_get    23
+#define SYS_ucnt_set        22
+#define SYS_ucnt_get        23
 
 // User buffer syscalls
-#define SYS_ubuf_write    24
-#define SYS_ubuf_read    25
+#define SYS_ubuf_write      24
+#define SYS_ubuf_read       25
 
 // Semaphore syscalls
 #define SYS_sem_init        26

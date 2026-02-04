@@ -5,34 +5,31 @@ int
 main(int argc, char *argv[])
 {
   int p[2];
-  char byte = 'x';
-  if(pipe(p) < 0){
-    fprintf(2, "pipe error\n");
-    exit(1);
-  }
-  int pid = fork();
-  if(pid < 0){
-    fprintf(2, "fork error\n");
-    exit(1);
-  }
+  char buf[5];
   
-  if(pid == 0){
+  pipe(p);
+  if(fork() == 0){
     // Child
-    if(read(p[0], &byte, 1) != 1){
-      fprintf(2, "child read error\n");
-      exit(1);
+    char* buf;
+    for (int j=0; j<5; j++) {
+      if ((j % 2) == 0) {
+        buf = "ping";
+        write(p[1], buf, 4);
+      } else {
+        buf = "pong";
+        write(p[1], buf, 4);
+      }
     }
-    printf("%d: received ping\n", getpid());
-    write(p[1], &byte, 1);
     exit(0);
   } else {
     // Parent
-    write(p[1], &byte, 1);
-    if(read(p[0], &byte, 1) != 1){
-      fprintf(2, "parent read error\n");
-      exit(1);
+    for (int j=0; j<5; j++) {
+      read(p[0], buf, 4);
+      printf("%d: received %s\n", getpid(), buf);
     }
-    printf("%d: received pong\n", getpid());
+
+    close(p[0]);
+    close(p[1]);
     wait(0);
     exit(0);
   }

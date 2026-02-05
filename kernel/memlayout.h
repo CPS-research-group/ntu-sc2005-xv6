@@ -8,8 +8,8 @@
 // 0C000000 -- PLIC
 // 10000000 -- uart0 
 // 10001000 -- virtio disk 
-// 80000000 -- boot ROM jumps here in machine mode
-//             -kernel loads the kernel here
+// 80000000 -- qemu's boot ROM loads the kernel here,
+//             then jumps here.
 // unused RAM after 80000000.
 
 // the kernel uses physical memory thus:
@@ -24,11 +24,6 @@
 // virtio mmio interface
 #define VIRTIO0 0x10001000
 #define VIRTIO0_IRQ 1
-
-// core local interruptor (CLINT), which contains the timer.
-#define CLINT 0x2000000L
-#define CLINT_MTIMECMP(hartid) (CLINT + 0x4000 + 8*(hartid))
-#define CLINT_MTIME (CLINT + 0xBFF8) // cycles since boot.
 
 // qemu puts platform-level interrupt controller (PLIC) here.
 #define PLIC 0x0c000000L

@@ -32,9 +32,10 @@ char buf[BUFSZ];
 void
 copyin(char *s)
 {
-  uint64 addrs[] = { 0x80000000LL, 0xffffffffffffffff };
+  uint64 addrs[] = { 0x80000000LL, 0x3fffffe000, 0x3ffffff000, 0x4000000000,
+                     0xffffffffffffffff };
 
-  for(int ai = 0; ai < 2; ai++){
+  for(int ai = 0; ai < sizeof(addrs)/sizeof(addrs[0]); ai++){
     uint64 addr = addrs[ai];
     
     int fd = open("copyin1", O_CREATE|O_WRONLY);
@@ -44,7 +45,7 @@ copyin(char *s)
     }
     int n = write(fd, (void*)addr, 8192);
     if(n >= 0){
-      printf("write(fd, %p, 8192) returned %d, not -1\n", addr, n);
+      printf("write(fd, %p, 8192) returned %d, not -1\n", (void*)addr, n);
       exit(1);
     }
     close(fd);
@@ -52,7 +53,7 @@ copyin(char *s)
     
     n = write(1, (char*)addr, 8192);
     if(n > 0){
-      printf("write(1, %p, 8192) returned %d, not -1 or 0\n", addr, n);
+      printf("write(1, %p, 8192) returned %d, not -1 or 0\n", (void*)addr, n);
       exit(1);
     }
     
@@ -63,7 +64,7 @@ copyin(char *s)
     }
     n = write(fds[1], (char*)addr, 8192);
     if(n > 0){
-      printf("write(pipe, %p, 8192) returned %d, not -1 or 0\n", addr, n);
+      printf("write(pipe, %p, 8192) returned %d, not -1 or 0\n", (void*)addr, n);
       exit(1);
     }
     close(fds[0]);
@@ -76,9 +77,10 @@ copyin(char *s)
 void
 copyout(char *s)
 {
-  uint64 addrs[] = { 0LL, 0x80000000LL, 0xffffffffffffffff };
+  uint64 addrs[] = { 0LL, 0x80000000LL, 0x3fffffe000, 0x3ffffff000, 0x4000000000,
+                     0xffffffffffffffff };
 
-  for(int ai = 0; ai < 2; ai++){
+  for(int ai = 0; ai < sizeof(addrs)/sizeof(addrs[0]); ai++){
     uint64 addr = addrs[ai];
 
     int fd = open("README", 0);
@@ -88,7 +90,7 @@ copyout(char *s)
     }
     int n = read(fd, (void*)addr, 8192);
     if(n > 0){
-      printf("read(fd, %p, 8192) returned %d, not -1 or 0\n", addr, n);
+      printf("read(fd, %p, 8192) returned %d, not -1 or 0\n", (void*)addr, n);
       exit(1);
     }
     close(fd);
@@ -105,7 +107,7 @@ copyout(char *s)
     }
     n = read(fds[0], (void*)addr, 8192);
     if(n > 0){
-      printf("read(pipe, %p, 8192) returned %d, not -1 or 0\n", addr, n);
+      printf("read(pipe, %p, 8192) returned %d, not -1 or 0\n", (void*)addr, n);
       exit(1);
     }
     close(fds[0]);
@@ -117,14 +119,15 @@ copyout(char *s)
 void
 copyinstr1(char *s)
 {
-  uint64 addrs[] = { 0x80000000LL, 0xffffffffffffffff };
+  uint64 addrs[] = { 0x80000000LL, 0x3fffffe000, 0x3ffffff000, 0x4000000000,
+                     0xffffffffffffffff };
 
-  for(int ai = 0; ai < 2; ai++){
+  for(int ai = 0; ai < sizeof(addrs)/sizeof(addrs[0]); ai++){
     uint64 addr = addrs[ai];
 
     int fd = open((char *)addr, O_CREATE|O_WRONLY);
     if(fd >= 0){
-      printf("open(%p) returned %d, not -1\n", addr, fd);
+      printf("open(%p) returned %d, not -1\n", (void*)addr, fd);
       exit(1);
     }
   }
@@ -264,7 +267,7 @@ rwsbrk(char *s)
   }
   n = write(fd, (void*)(a+4096), 1024);
   if(n >= 0){
-    printf("write(fd, %p, 1024) returned %d, not -1\n", a+4096, n);
+    printf("write(fd, %p, 1024) returned %d, not -1\n", (void*)a+4096, n);
     exit(1);
   }
   close(fd);
@@ -277,7 +280,7 @@ rwsbrk(char *s)
   }
   n = read(fd, (void*)(a+4096), 10);
   if(n >= 0){
-    printf("read(fd, %p, 10) returned %d, not -1\n", a+4096, n);
+    printf("read(fd, %p, 10) returned %d, not -1\n", (void*)a+4096, n);
     exit(1);
   }
   close(fd);
@@ -589,7 +592,7 @@ writebig(char *s)
   for(i = 0; i < MAXFILE; i++){
     ((int*)buf)[0] = i;
     if(write(fd, buf, BSIZE) != BSIZE){
-      printf("%s: error: write big file failed\n", s, i);
+      printf("%s: error: write big file failed i=%d\n", s, i);
       exit(1);
     }
   }
@@ -606,7 +609,7 @@ writebig(char *s)
   for(;;){
     i = read(fd, buf, BSIZE);
     if(i == 0){
-      if(n == MAXFILE - 1){
+      if(n != MAXFILE){
         printf("%s: read only %d blocks from big", s, n);
         exit(1);
       }
@@ -773,7 +776,7 @@ pipe1(char *s)
         cc = sizeof(buf);
     }
     if(total != N * SZ){
-      printf("%s: pipe1 oops 3 total %d\n", total);
+      printf("%s: pipe1 oops 3 total %d\n", s, total);
       exit(1);
     }
     close(fds[0]);
@@ -1069,7 +1072,7 @@ mem(char *s)
     }
     m1 = malloc(1024*20);
     if(m1 == 0){
-      printf("couldn't allocate mem?!!\n", s);
+      printf("%s: couldn't allocate mem?!!\n", s);
       exit(1);
     }
     free(m1);
@@ -1161,14 +1164,14 @@ fourfiles(char *s)
 
     pid = fork();
     if(pid < 0){
-      printf("fork failed\n", s);
+      printf("%s: fork failed\n", s);
       exit(1);
     }
 
     if(pid == 0){
       fd = open(fname, O_CREATE | O_RDWR);
       if(fd < 0){
-        printf("create failed\n", s);
+        printf("%s: create failed\n", s);
         exit(1);
       }
 
@@ -1197,7 +1200,7 @@ fourfiles(char *s)
     while((n = read(fd, buf, sizeof(buf))) > 0){
       for(j = 0; j < n; j++){
         if(buf[j] != '0'+i){
-          printf("wrong char\n", s);
+          printf("%s: wrong char\n", s);
           exit(1);
         }
       }
@@ -1223,7 +1226,7 @@ createdelete(char *s)
   for(pi = 0; pi < NCHILD; pi++){
     pid = fork();
     if(pid < 0){
-      printf("fork failed\n", s);
+      printf("%s: fork failed\n", s);
       exit(1);
     }
 
@@ -1277,7 +1280,7 @@ createdelete(char *s)
 
   for(i = 0; i < N; i++){
     for(pi = 0; pi < NCHILD; pi++){
-      name[0] = 'p' + i;
+      name[0] = 'p' + pi;
       name[1] = '0' + i;
       unlink(name);
     }
@@ -1544,7 +1547,7 @@ subdir(char *s)
   }
 
   if(mkdir("/dd/dd") != 0){
-    printf("subdir mkdir dd/dd failed\n", s);
+    printf("%s: subdir mkdir dd/dd failed\n", s);
     exit(1);
   }
 
@@ -1569,7 +1572,7 @@ subdir(char *s)
   close(fd);
 
   if(link("dd/dd/ff", "dd/dd/ffff") != 0){
-    printf("link dd/dd/ff dd/dd/ffff failed\n", s);
+    printf("%s: link dd/dd/ff dd/dd/ffff failed\n", s);
     exit(1);
   }
 
@@ -1591,7 +1594,7 @@ subdir(char *s)
     exit(1);
   }
   if(chdir("dd/../../../dd") != 0){
-    printf("chdir dd/../../dd failed\n", s);
+    printf("%s: chdir dd/../../../dd failed\n", s);
     exit(1);
   }
   if(chdir("./..") != 0){
@@ -2034,7 +2037,7 @@ sbrkbasic(char *s)
   for(i = 0; i < 5000; i++){
     b = sbrk(1);
     if(b != a){
-      printf("%s: sbrk test failed %d %x %x\n", s, i, a, b);
+      printf("%s: sbrk test failed %d %p %p\n", s, i, a, b);
       exit(1);
     }
     *b = 1;
@@ -2092,7 +2095,7 @@ sbrkmuch(char *s)
   }
   c = sbrk(0);
   if(c != a - PGSIZE){
-    printf("%s: sbrk deallocation produced wrong address, a %x c %x\n", s, a, c);
+    printf("%s: sbrk deallocation produced wrong address, a %p c %p\n", s, a, c);
     exit(1);
   }
 
@@ -2100,7 +2103,7 @@ sbrkmuch(char *s)
   a = sbrk(0);
   c = sbrk(PGSIZE);
   if(c != a || sbrk(0) != a + PGSIZE){
-    printf("%s: sbrk re-allocation failed, a %x c %x\n", s, a, c);
+    printf("%s: sbrk re-allocation failed, a %p c %p\n", s, a, c);
     exit(1);
   }
   if(*lastaddr == 99){
@@ -2112,7 +2115,7 @@ sbrkmuch(char *s)
   a = sbrk(0);
   c = sbrk(-(sbrk(0) - oldbrk));
   if(c != a){
-    printf("%s: sbrk downsize failed, a %x c %x\n", s, a, c);
+    printf("%s: sbrk downsize failed, a %p c %p\n", s, a, c);
     exit(1);
   }
 }
@@ -2131,7 +2134,7 @@ kernmem(char *s)
       exit(1);
     }
     if(pid == 0){
-      printf("%s: oops could read %x = %x\n", s, a, *a);
+      printf("%s: oops could read %p = %x\n", s, a, *a);
       exit(1);
     }
     int xstatus;
@@ -2155,7 +2158,7 @@ MAXVAplus(char *s)
     }
     if(pid == 0){
       *(char*)a = 99;
-      printf("%s: oops wrote %x\n", s, a);
+      printf("%s: oops wrote %p\n", s, (void*)a);
       exit(1);
     }
     int xstatus;
@@ -2307,9 +2310,14 @@ bigargtest(char *s)
   if(pid == 0){
     static char *args[MAXARG];
     int i;
+    char big[400];
+    memset(big, ' ', sizeof(big));
+    big[sizeof(big)-1] = '\0';
     for(i = 0; i < MAXARG-1; i++)
-      args[i] = "bigargs test: failed\n                                                                                                                                                                                                       ";
+      args[i] = big;
     args[MAXARG-1] = 0;
+    // this exec() should fail (and return) because the
+    // arguments are too large.
     exec("echo", args);
     fd = open("bigarg-ok", O_CREATE);
     close(fd);
@@ -2406,9 +2414,9 @@ stacktest(char *s)
   pid = fork();
   if(pid == 0) {
     char *sp = (char *) r_sp();
-    sp -= PGSIZE;
+    sp -= USERSTACK*PGSIZE;
     // the *sp should cause a trap.
-    printf("%s: stacktest: read below stack %p\n", s, *sp);
+    printf("%s: stacktest: read below stack %d\n", s, *sp);
     exit(1);
   } else if(pid < 0){
     printf("%s: fork failed\n", s);
@@ -2421,27 +2429,34 @@ stacktest(char *s)
     exit(xstatus);
 }
 
-// check that writes to text segment fault
+// check that writes to a few forbidden addresses
+// cause a fault, e.g. process's text and TRAMPOLINE.
 void
-textwrite(char *s)
+nowrite(char *s)
 {
   int pid;
   int xstatus;
+  uint64 addrs[] = { 0, 0x80000000LL, 0x3fffffe000, 0x3ffffff000, 0x4000000000,
+                     0xffffffffffffffff };
   
-  pid = fork();
-  if(pid == 0) {
-    volatile int *addr = (int *) 0;
-    *addr = 10;
-    exit(1);
-  } else if(pid < 0){
-    printf("%s: fork failed\n", s);
-    exit(1);
+  for(int ai = 0; ai < sizeof(addrs)/sizeof(addrs[0]); ai++){
+    pid = fork();
+    if(pid == 0) {
+      volatile int *addr = (int *) addrs[ai];
+      *addr = 10;
+      printf("%s: write to %p did not fail!\n", s, addr);
+      exit(0);
+    } else if(pid < 0){
+      printf("%s: fork failed\n", s);
+      exit(1);
+    }
+    wait(&xstatus);
+    if(xstatus == 0){
+      // kernel did not kill child!
+      exit(1);
+    }
   }
-  wait(&xstatus);
-  if(xstatus == -1)  // kernel killed child?
-    exit(0);
-  else
-    exit(xstatus);
+  exit(0);
 }
 
 // regression test. copyin(), copyout(), and copyinstr() used to cast
@@ -2629,7 +2644,7 @@ struct test {
   {bigargtest, "bigargtest"},
   {argptest, "argptest"},
   {stacktest, "stacktest"},
-  {textwrite, "textwrite"},
+  {nowrite, "nowrite"},
   {pgbug, "pgbug" },
   {sbrkbugs, "sbrkbugs" },
   {sbrklast, "sbrklast"},
@@ -2666,7 +2681,7 @@ bigdir(char *s)
     name[2] = '0' + (i % 64);
     name[3] = '\0';
     if(link("bd", name) != 0){
-      printf("%s: bigdir link(bd, %s) failed\n", s, name);
+      printf("%s: bigdir i=%d link(bd, %s) failed\n", s, i, name);
       exit(1);
     }
   }
@@ -2868,7 +2883,7 @@ diskfull(char *s)
 
   // this mkdir() is expected to fail.
   if(mkdir("diskfulldir") == 0)
-    printf("%s: mkdir(diskfulldir) unexpectedly succeeded!\n");
+    printf("%s: mkdir(diskfulldir) unexpectedly succeeded!\n", s);
 
   unlink("diskfulldir");
 

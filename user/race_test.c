@@ -56,7 +56,7 @@ void race_test() {
     }
 
     sem_free(semid);
-}    
+}
 
 struct buf_sem {
     // TODO: add semaphores as required
@@ -65,7 +65,7 @@ struct buf_sem {
 void consumer(struct buf_sem b, int loops, int valid[]) {
     char tmp;
     for(int i = 0; i < loops; i++) {
-        // TODO: wait buffer slot full and signal empty slot 
+        // TODO: wait buffer slot full and signal empty slot
         tmp = ubuf_read();
         T_ASSERT(valid[(unsigned char)tmp]);
     }
@@ -80,7 +80,7 @@ void producer(const char* msg, struct buf_sem b) {
 
 void producer_consumer() {
     #define MSG_SIZE 48
-    const char msg[MSG_SIZE] = "cafefacefacefacefacefacefacefacefacecafecafecafe";
+    const char msg[MSG_SIZE +1] = "cafefacefacefacefacefacefacefacefacecafecafecafe";
     const int NUM_PROD = 2;
     int valid[256] = {0};
     for (const char* p = msg; *p != '\0'; p++) {
@@ -112,7 +112,7 @@ void producer_consumer() {
 
 int main() {
     sem_basic();
-    
+
     race_test();
 
     producer_consumer();

@@ -80,7 +80,7 @@ void producer(const char* msg, struct buf_sem b) {
 
 void producer_consumer() {
     #define MSG_SIZE 48
-    const char msg[MSG_SIZE] = "cafefacefacefacefacefacefacefacefacecafecafecafe";
+    const char msg[MSG_SIZE + 1] = "cafefacefacefacefacefacefacefacefacecafecafecafe";
     const int NUM_PROD = 2;
     int valid[256] = {0};
     for (const char* p = msg; *p != '\0'; p++) {
